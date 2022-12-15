@@ -1,5 +1,5 @@
 SET
-@Entry = 200000,
+@Entry = 200001,
 @Name = "Reno Raines";
 
 DELETE FROM `creature_template` WHERE entry = @entry;
