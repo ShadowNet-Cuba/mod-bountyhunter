@@ -3,7 +3,7 @@
 * https://github.com/lineagedr *
 *                              *
 *    Created on: 14/08/2021    *
-*    Updated on: 21/09/2022    *
+*    Updated on: 08/01/2023    *
 ********************************/
 
 #include "BountyHunter.h"
@@ -13,7 +13,9 @@
 class BountyHunter_Player : public PlayerScript
 {
 public:
-    BountyHunter_Player() : PlayerScript("BountyHunter_Player") {}
+    BountyHunter_Player() 
+		: PlayerScript("BountyHunter_Player") 
+	{}
 
     void OnPVPKill(Player* killer, Player* bounty) override
     {
@@ -58,13 +60,17 @@ public:
                 text.bountyName += "|r]";
             }
             else
+            {
                 text.bountyName += "[|cffff0000Desconocido|r]";
-        }
-        else
+            }
+		}
+        else			
+        {
             text.bountyName += "[|cffff0000Desconocido|r]";
+        }
 
-        const std::string selected = " [|cff00ff00Cantidad|r][Seleccionada]: ";
-        const std::string notSelected = " [|cffff0000No seleccionada|r] ";
+        static const std::string selected = " [|cff00ff00Cantidad|r][Seleccionada]: ";
+        static const std::string notSelected = " [|cffff0000No seleccionada|r] ";
 
         switch (sBountyHunter->GetBountyGossipData()[player->GetGUID()].priceType)
         {
@@ -90,7 +96,12 @@ public:
 
     inline void GossipForPlaceBounty(Player* player, Creature* creature)
     {
-        BountyGossipSelectText text = { "|TInterface/ICONS/achievement_bg_killingblow_berserker:25:25|tNombre del Jugador ", "|TInterface/ICONS/inv_misc_coin_02:25:25|tOro", "|TInterface/ICONS/ability_dualwield:25:25|tHonor", "" };
+        static BountyGossipSelectText text = 
+		{ 
+			"|TInterface/ICONS/achievement_bg_killingblow_berserker:25:25|tNombre del Jugador ", 
+			"|TInterface/ICONS/inv_misc_coin_02:25:25|tOro", 
+			"|TInterface/ICONS/ability_dualwield:25:25|tHonor", "" 
+		};
         text.tokens = sBountyHunter->GetTokenIcon().c_str();
         text.tokens += sBountyHunter->GetTokenName().c_str();
 
@@ -100,9 +111,13 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_VENDOR, text.gold.c_str(), GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_GOLD), "", 0, true);
         AddGossipItemFor(player, GOSSIP_ICON_VENDOR, text.honor.c_str(), GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_HONOR), "", 0, true);
         if (sBountyHunter->GetTokenId())
+		{
             AddGossipItemFor(player, GOSSIP_ICON_VENDOR, text.tokens.c_str(), GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_TOKENS), "", 0, true);
+		}
         if (sBountyHunter->IsReadyToSubmitBounty(player->GetGUID()))
+		{
             AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "|TInterface/ICONS/inv_misc_book_11:25:25|tEnviar recompensa", GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_SUBMIT_BOUNTY));
+		}
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
     }
 
@@ -114,7 +129,9 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "|TInterface/ICONS/achievement_pvp_h_13:25:25|tMe gustaría colocar una recompensa", GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_PLACE_BOUNTY));
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "|TInterface/ICONS/inv_misc_note_05:25:25|tLista de las recompensas actuales", GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_LIST_BOUNTY));
         if (player->GetSession()->GetSecurity() > SEC_PLAYER)
+		{
             AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|TInterface/ICONS/inv_misc_note_06:25:25|tBorrar las recompensas actuales(GM)", GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_WIPE_BOUNTY));
+		}
         AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|TInterface/ICONS/spell_shadow_sacrificialshield:25:25|tSalir", GOSSIP_SENDER_MAIN, static_cast<uint8>(BountyHunter_Menu::GOSSIP_EXIT));
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
         return true;
@@ -183,7 +200,8 @@ public:
 private:
     bool ValidateAmount(Player* player, BountyPriceType action, uint32 amount)
     {
-        if (!amount) return false;
+        if (!amount) 
+			return false;
 
         switch (action)
         {
@@ -223,7 +241,7 @@ private:
         const std::string temp = code;
         uint32 amount = 0;
 
-        const auto validateAmount = [&]()
+        const auto validateAmount = [&]() -> bool
         {
             // max amount of 5 numbers
             if (temp.size() > 5)
