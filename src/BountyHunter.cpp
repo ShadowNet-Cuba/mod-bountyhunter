@@ -172,7 +172,7 @@ void BountyHunter::Announce(const Player* bounty, BountyAnnounceType type, const
     case BountyAnnounceType::TYPE_COLLECTED:
         msg += killerName.data();
         msg += " ha recogido ";
-        msg += "por";
+        msg += " por";
         msg += std::to_string(m_BountyContainer[bounty->GetGUID()].amount);
         msg += ' ';
         GetTokenType();
